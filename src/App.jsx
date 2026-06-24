@@ -106,25 +106,28 @@ const [isRunning, setIsRunning] = useState(true);
   const currentRoute = routeOptions[routeIndex];
 const fullDriverRoute = currentRoute.points;
 
-  const activeRoute = useMemo(() => {
-    const routeWindow = fullDriverRoute.slice(
-      routeStartIndex,
-      routeStartIndex + ROUTE_WINDOW_SIZE
-    );
+  
 
-    if (routeWindow.length < 2) {
-      return fullDriverRoute.slice(0, 2);
-    }
-
-    return routeWindow;
-  }, [routeStartIndex]);
-  const driverPosition = activeRoute[0];
+  const driverPosition = fullDriverRoute[routeStartIndex] || fullDriverRoute[0];
   const routeStartPoint = fullDriverRoute[0];
 const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
 const directionMarkers = useMemo(() => {
   return activeRoute.slice(0, -1).map((point, index) => {
     const nextPoint = activeRoute[index + 1];
+const activeRoute = useMemo(() => {
+  if (!fullDriverRoute || fullDriverRoute.length < 2) return [];
 
+  const routeWindow = fullDriverRoute.slice(
+    routeStartIndex,
+    routeStartIndex + ROUTE_WINDOW_SIZE
+  );
+
+  if (routeWindow.length >= 2) {
+    return routeWindow;
+  }
+
+  return fullDriverRoute.slice(-2);
+}, [fullDriverRoute, routeStartIndex]);
     const midpoint = [
       (point[0] + nextPoint[0]) / 2,
       (point[1] + nextPoint[1]) / 2,
@@ -160,9 +163,9 @@ const directionMarkers = useMemo(() => {
 
   const interval = setInterval(() => {
     setRouteStartIndex((prev) => {
-      const maxStartIndex = fullDriverRoute.length - ROUTE_WINDOW_SIZE;
+      const finalPointIndex = fullDriverRoute.length - 1;
 
-      if (prev >= maxStartIndex) {
+      if (prev >= finalPointIndex) {
         setRouteIndex((oldRouteIndex) => {
           return (oldRouteIndex + 1) % routeOptions.length;
         });
@@ -172,7 +175,7 @@ const directionMarkers = useMemo(() => {
 
       return prev + 1;
     });
-  }, 1800);
+  }, 2200);
 
   return () => clearInterval(interval);
 }, [isRunning, fullDriverRoute.length]);
