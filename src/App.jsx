@@ -9,6 +9,7 @@ import {
   Popup,
   GeoJSON,
   Marker,
+  useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -49,6 +50,24 @@ const endIcon = L.divIcon({
   iconSize: [34, 34],
   iconAnchor: [17, 17],
 });
+function FitRouteBounds({ route, routeId }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!route || route.length < 2) return;
+
+    const bounds = L.latLngBounds(route);
+
+    map.fitBounds(bounds, {
+      padding: [100, 100],
+      maxZoom: 14,
+      animate: true,
+      duration: 0.8,
+    });
+  }, [map, route, routeId]);
+
+  return null;
+}
 
 
 function App() {
@@ -188,6 +207,7 @@ const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
   className="map"
   scrollWheelZoom={true}
 >
+  <FitRouteBounds route={fullDriverRoute} routeId={currentRoute.id} />
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
