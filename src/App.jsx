@@ -71,10 +71,10 @@ function calculateBearing(start, end) {
 
 function createDirectionArrowIcon(bearing) {
   return L.divIcon({
-    html: `<div class="route-direction-arrow" style="transform: rotate(${bearing}deg)">▲</div>`,
+    html: `<div class="route-direction-arrow" style="transform: rotate(${bearing}deg)"></div>`,
     className: "route-direction-icon",
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
   });
 }
 function FitRouteBounds({ route, routeId }) {
