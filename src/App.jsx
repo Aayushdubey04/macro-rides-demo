@@ -50,6 +50,33 @@ const endIcon = L.divIcon({
   iconSize: [34, 34],
   iconAnchor: [17, 17],
 });
+function calculateBearing(start, end) {
+  const [lat1, lng1] = start;
+  const [lat2, lng2] = end;
+
+  const toRad = (degree) => (degree * Math.PI) / 180;
+  const toDeg = (radian) => (radian * 180) / Math.PI;
+
+  const phi1 = toRad(lat1);
+  const phi2 = toRad(lat2);
+  const deltaLng = toRad(lng2 - lng1);
+
+  const y = Math.sin(deltaLng) * Math.cos(phi2);
+  const x =
+    Math.cos(phi1) * Math.sin(phi2) -
+    Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLng);
+
+  return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
+
+function createDirectionArrowIcon(bearing) {
+  return L.divIcon({
+    html: `<div class="route-direction-arrow" style="transform: rotate(${bearing}deg)">▲</div>`,
+    className: "route-direction-icon",
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
+}
 function FitRouteBounds({ route, routeId }) {
   const map = useMap();
 
@@ -94,6 +121,24 @@ const fullDriverRoute = currentRoute.points;
   const driverPosition = activeRoute[0];
   const routeStartPoint = fullDriverRoute[0];
 const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
+const directionMarkers = useMemo(() => {
+  return activeRoute.slice(0, -1).map((point, index) => {
+    const nextPoint = activeRoute[index + 1];
+
+    const midpoint = [
+      (point[0] + nextPoint[0]) / 2,
+      (point[1] + nextPoint[1]) / 2,
+    ];
+
+    const bearing = calculateBearing(point, nextPoint);
+
+    return {
+      id: `${currentRoute.id}-${routeStartIndex}-${index}`,
+      position: midpoint,
+      bearing,
+    };
+  });
+}, [activeRoute, currentRoute.id, routeStartIndex]);
 
   const bufferPolygon = useMemo(() => {
     return createRouteBuffer(activeRoute);
@@ -252,6 +297,14 @@ const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
     opacity: 0.98,
   }}
 />
+{directionMarkers.map((arrow) => (
+  <Marker
+    key={arrow.id}
+    position={arrow.position}
+    icon={createDirectionArrowIcon(arrow.bearing)}
+    zIndexOffset={900}
+  />
+))}
 {routeStartPoint && (
   <Marker position={routeStartPoint} icon={startIcon} zIndexOffset={800}>
     <Popup>
