@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+
 import {
   MapContainer,
   TileLayer,
@@ -22,12 +23,20 @@ import {
   getCorridorH3Cells,
   getH3Boundary,
 } from "./utils/geoUtils";
+
 const autoIcon = L.divIcon({
-  html: `<div class="auto-marker">🛺</div>`,
+  html: `
+    <div class="driver-pulse">
+      <div class="driver-marker">
+        <div class="driver-icon">EV</div>
+      </div>
+    </div>
+  `,
   className: "custom-auto-icon",
-  iconSize: [42, 42],
-  iconAnchor: [21, 21],
+  iconSize: [52, 52],
+  iconAnchor: [26, 26],
 });
+
 
 function App() {
   const [routeIndex, setRouteIndex] = useState(0);
@@ -184,12 +193,23 @@ const fullDriverRoute = currentRoute.points;
         ))}
 
         <Polyline
-          positions={activeRoute}
-          pathOptions={{
-            color: "#2563eb",
-            weight: 5,
-          }}
-        />
+  positions={fullDriverRoute}
+  pathOptions={{
+    color: "#64748b",
+    weight: 3,
+    opacity: 0.55,
+    dashArray: "8, 10",
+  }}
+/>
+
+<Polyline
+  positions={activeRoute}
+  pathOptions={{
+    color: "#0f172a",
+    weight: 5,
+    opacity: 0.95,
+  }}
+/>
         {driverPosition && (
   <Marker position={driverPosition} icon={autoIcon}>
     <Popup>
@@ -218,27 +238,29 @@ const fullDriverRoute = currentRoute.points;
         )}
 
         {corridorCells.slice(0, 400).map((cell) => (
-          <Polygon
-            key={cell}
-            positions={getH3Boundary(cell)}
-            pathOptions={{
-              color: "#0284c7",
-              weight: 1,
-              fillOpacity: 0.04,
-            }}
-          />
-        ))}
+  <Polygon
+    key={cell}
+    positions={getH3Boundary(cell)}
+    pathOptions={{
+      color: "#38bdf8",
+      weight: 0.7,
+      opacity: 0.55,
+      fillOpacity: 0.015,
+    }}
+  />
+))}
 
         {classifiedPickups.map((point) => (
           <CircleMarker
             key={point.id}
             center={[point.lat, point.lng]}
-            radius={8}
-            pathOptions={{
-              color: point.eligible ? "#16a34a" : "#dc2626",
-              fillColor: point.eligible ? "#16a34a" : "#dc2626",
-              fillOpacity: 0.9,
-            }}
+            radius={point.eligible ? 9 : 7}
+pathOptions={{
+  color: "#ffffff",
+  weight: 2,
+  fillColor: point.eligible ? "#16a34a" : "#ef4444",
+  fillOpacity: 0.95,
+}}
           >
             <Popup>
               <strong>{point.name}</strong>
