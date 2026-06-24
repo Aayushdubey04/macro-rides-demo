@@ -303,10 +303,12 @@ pathOptions={{
               Pickup ID: {point.id}
               <br />
               Status: {point.eligible ? "Eligible" : "Not Eligible"}
-              <br />
-              H3 Cell: {point.h3Cell}
-              <br />
-              Exact inside corridor: {point.exactInside ? "Yes" : "No"}
+<br />
+Inside 350m corridor: {point.exactInside ? "Yes" : "No"}
+<br />
+H3 corridor match: {point.h3Candidate ? "Yes" : "No"}
+<br />
+H3 Cell: {point.h3Cell}
             </Popup>
           </CircleMarker>
         ))}
