@@ -40,32 +40,79 @@ export function getCorridorH3Cells(bufferPolygon) {
   }
 }
 
-export function classifyPickupPoints(pickupPoints, bufferPolygon, corridorCells) {
-  if (!bufferPolygon) {
-    return pickupPoints.map((point) => ({
-      ...point,
-      h3Cell: latLngToCell(point.lat, point.lng, H3_RESOLUTION),
-      eligible: false,
-    }));
+function createZonePolygon(zone) {
+  const ring = zone.coordinates.map(([lat, lng]) => [lng, lat]);
+
+  const firstPoint = ring[0];
+  const lastPoint = ring[ring.length - 1];
+
+  const isClosed =
+    firstPoint[0] === lastPoint[0] && firstPoint[1] === lastPoint[1];
+
+  if (!isClosed) {
+    ring.push(firstPoint);
   }
 
+  return turf.polygon([ring], {
+    id: zone.id,
+    name: zone.name,
+  });
+}
+
+function getServiceZoneForPickup(point, zonePolygons) {
+  const pointGeoJSON = turf.point([point.lng, point.lat]);
+
+  const matchedZone = zonePolygons.find((zone) =>
+    turf.booleanPointInPolygon(pointGeoJSON, zone.polygon)
+  );
+
+  return matchedZone || null;
+}
+
+export function classifyPickupPoints(
+  pickupPoints,
+  bufferPolygon,
+  corridorCells,
+  zones = []
+) {
   const corridorCellSet = new Set(corridorCells);
+
+  const zonePolygons = zones.map((zone) => ({
+    id: zone.id,
+    name: zone.name,
+    polygon: createZonePolygon(zone),
+  }));
 
   return pickupPoints.map((point) => {
     const h3Cell = latLngToCell(point.lat, point.lng, H3_RESOLUTION);
 
     const nearbyCells = gridDisk(h3Cell, 1);
-    const h3Candidate = nearbyCells.some((cell) => corridorCellSet.has(cell));
+
+    const h3Candidate = nearbyCells.some((cell) =>
+      corridorCellSet.has(cell)
+    );
 
     const pointGeoJSON = turf.point([point.lng, point.lat]);
-    const exactInside = turf.booleanPointInPolygon(pointGeoJSON, bufferPolygon);
+
+    const exactInside = bufferPolygon
+      ? turf.booleanPointInPolygon(pointGeoJSON, bufferPolygon)
+      : false;
+
+    const serviceZone = getServiceZoneForPickup(point, zonePolygons);
+
+    const insideServiceZone = Boolean(serviceZone);
+
+    const eligible = h3Candidate && exactInside && insideServiceZone;
 
     return {
       ...point,
       h3Cell,
       h3Candidate,
       exactInside,
-      eligible: h3Candidate && exactInside,
+      insideServiceZone,
+      serviceZoneId: serviceZone?.id || null,
+      serviceZoneName: serviceZone?.name || "Outside service zone",
+      eligible,
     };
   });
 }

@@ -162,11 +162,14 @@ const directionMarkers = useMemo(() => {
   }, [bufferPolygon]);
 
   const classifiedPickups = useMemo(() => {
-    return classifyPickupPoints(pickupPoints, bufferPolygon, corridorCells);
+    return classifyPickupPoints(pickupPoints, bufferPolygon, corridorCells, zones );
   }, [bufferPolygon, corridorCells]);
 
   const eligibleCount = classifiedPickups.filter((p) => p.eligible).length;
   const nonEligibleCount = classifiedPickups.length - eligibleCount;
+  const insideZoneCount = classifiedPickups.filter(
+  (p) => p.insideServiceZone
+).length;
 
   useEffect(() => {
   if (!isRunning) return;
@@ -196,6 +199,9 @@ const directionMarkers = useMemo(() => {
         <h2>Macro Rides</h2>
         <h3>Zone Boundary + Dynamic Route Corridor Tool</h3>
         <p className="route-name">{currentRoute.name}</p>
+        <p className="demo-note">
+        Eligibility = 350m corridor + H3 match + Macro service zone
+        </p>
         <div className="route-selector">
         <label>Select Route</label>
         <select
@@ -231,6 +237,11 @@ const directionMarkers = useMemo(() => {
         <div className="metric">
           <span>Eligible Pickups</span>
           <strong>{eligibleCount}</strong>
+        </div>
+
+        <div className="metric">
+        <span>Inside Service Zone</span>
+        <strong>{insideZoneCount}</strong>
         </div>
 
         <div className="metric">
@@ -418,13 +429,19 @@ pathOptions={{
               <br />
               Pickup ID: {point.id}
               <br />
+
               Status: {point.eligible ? "Eligible" : "Not Eligible"}
-<br />
-Inside 350m corridor: {point.exactInside ? "Yes" : "No"}
-<br />
-H3 corridor match: {point.h3Candidate ? "Yes" : "No"}
-<br />
-H3 Cell: {point.h3Cell}
+              <br />
+              Inside 350m corridor: {point.exactInside ? "Yes" : "No"}
+              <br />
+              H3 corridor match: {point.h3Candidate ? "Yes" : "No"}
+              <br />
+              Inside service zone: {point.insideServiceZone ? "Yes" : "No"}
+              <br />
+              Service Zone: {point.serviceZoneName}
+              <br />
+              H3 Cell: {point.h3Cell}
+
             </Popup>
           </CircleMarker>
         ))}
