@@ -73,8 +73,8 @@ function createDirectionArrowIcon(bearing) {
   return L.divIcon({
     html: `<div class="route-direction-arrow" style="transform: rotate(${bearing}deg)"></div>`,
     className: "route-direction-icon",
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
   });
 }
 function FitRouteBounds({ route, routeId }) {
@@ -183,6 +183,22 @@ const directionMarkers = useMemo(() => {
         <h2>Macro Rides</h2>
         <h3>Zone Boundary + Dynamic Route Corridor Tool</h3>
         <p className="route-name">{currentRoute.name}</p>
+        <div className="route-selector">
+        <label>Select Route</label>
+        <select
+        value={routeIndex}
+        onChange={(e) => {
+        setRouteIndex(Number(e.target.value));
+        setRouteStartIndex(0);
+        }}
+        >
+    {routeOptions.map((route, index) => (
+      <option key={route.id} value={index}>
+        {route.name}
+      </option>
+    ))}
+  </select>
+</div>
 
         <div className="metric">
           <span>Buffer Radius</span>

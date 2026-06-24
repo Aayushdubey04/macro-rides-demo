@@ -236,3 +236,32 @@ button:hover {
   background: #14b8a6;
   bottom: 3px;
 }
+.route-selector {
+  margin-bottom: 18px;
+}
+
+.route-selector label {
+  display: block;
+  margin-bottom: 7px;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.route-selector select {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.route-selector select:focus {
+  border-color: #15803d;
+  box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+}
