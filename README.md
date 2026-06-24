@@ -10,8 +10,6 @@ The solution uses H3 spatial indexing for geospatial cell-based lookup and Leafl
 
 ## Live Demo
 
-Add your deployed link here:
-
 ```text
 Live Demo: <your-vercel-link>
 ```
@@ -21,7 +19,7 @@ Live Demo: <your-vercel-link>
 ## GitHub Repository
 
 ```text
-GitHub Repository: <your-github-repository-link>
+GitHub Repository: <>
 ```
 
 ---
