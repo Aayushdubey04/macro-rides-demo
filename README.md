@@ -11,7 +11,7 @@ The solution uses H3 spatial indexing for geospatial cell-based lookup and Leafl
 ## Live Demo
 
 ```text
-Live Demo: <your-vercel-link>
+Live Demo: <https://macro-rides-demo.vercel.app/>
 ```
 
 ---
