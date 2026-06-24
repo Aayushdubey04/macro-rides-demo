@@ -19,7 +19,7 @@ Live Demo: <your-vercel-link>
 ## GitHub Repository
 
 ```text
-GitHub Repository: <>
+GitHub Repository: <https://github.com/Aayushdubey04/macro-rides-demo>
 ```
 
 ---
@@ -324,7 +324,7 @@ Contains styling for:
 ### 1. Clone the repository
 
 ```bash
-git clone <your-github-repository-link>
+git clone <https://github.com/Aayushdubey04/macro-rides-demo>
 ```
 
 ### 2. Move into the project folder
