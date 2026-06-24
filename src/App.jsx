@@ -105,24 +105,22 @@ const [isRunning, setIsRunning] = useState(true);
   const ROUTE_WINDOW_SIZE = 6;
   const currentRoute = routeOptions[routeIndex];
 const fullDriverRoute = currentRoute.points;
+
+
 const activeRoute = useMemo(() => {
   if (!fullDriverRoute || fullDriverRoute.length < 2) return [];
 
-  const safeStartIndex = Math.min(
-    routeStartIndex,
-    fullDriverRoute.length - 1
-  );
+  const finalPointIndex = fullDriverRoute.length - 1;
 
-  const routeWindow = fullDriverRoute.slice(
-    safeStartIndex,
-    safeStartIndex + ROUTE_WINDOW_SIZE
-  );
-
-  if (routeWindow.length >= 2) {
-    return routeWindow;
+  // At destination, no forward active path remains
+  if (routeStartIndex >= finalPointIndex) {
+    return [];
   }
 
-  return fullDriverRoute.slice(-2);
+  return fullDriverRoute.slice(
+    routeStartIndex,
+    Math.min(routeStartIndex + ROUTE_WINDOW_SIZE, fullDriverRoute.length)
+  );
 }, [fullDriverRoute, routeStartIndex]);
 
   
@@ -133,7 +131,11 @@ const activeRoute = useMemo(() => {
     : null;
   const routeStartPoint = fullDriverRoute[0];
 const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
+
+
 const directionMarkers = useMemo(() => {
+  if (!activeRoute || activeRoute.length < 2) return [];
+
   return activeRoute.slice(0, -1).map((point, index) => {
     const nextPoint = activeRoute[index + 1];
 
@@ -321,22 +323,27 @@ const directionMarkers = useMemo(() => {
     dashArray: "8, 10",
   }}
 />
-<Polyline
-  positions={activeRoute}
-  pathOptions={{
-    color: "#14b8a6",
-    weight: 11,
-    opacity: 0.28,
-  }}
-/>
-<Polyline
-  positions={activeRoute}
-  pathOptions={{
-    color: "#0f172a",
-    weight: 5.5,
-    opacity: 0.98,
-  }}
-/>
+{activeRoute.length >= 2 && (
+  <>
+    <Polyline
+      positions={activeRoute}
+      pathOptions={{
+        color: "#14b8a6",
+        weight: 11,
+        opacity: 0.28,
+      }}
+    />
+
+    <Polyline
+      positions={activeRoute}
+      pathOptions={{
+        color: "#0f172a",
+        weight: 5.5,
+        opacity: 0.98,
+      }}
+    />
+  </>
+)}
 {directionMarkers.map((arrow) => (
   <Marker
     key={arrow.id}
