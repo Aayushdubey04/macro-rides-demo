@@ -36,6 +36,19 @@ const autoIcon = L.divIcon({
   iconSize: [52, 52],
   iconAnchor: [26, 26],
 });
+const startIcon = L.divIcon({
+  html: `<div class="route-endpoint start-point">S</div>`,
+  className: "custom-route-point-icon",
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+});
+
+const endIcon = L.divIcon({
+  html: `<div class="route-endpoint end-point">E</div>`,
+  className: "custom-route-point-icon",
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+});
 
 
 function App() {
@@ -43,7 +56,7 @@ function App() {
 const [routeStartIndex, setRouteStartIndex] = useState(0);
 const [isRunning, setIsRunning] = useState(true);
 
-  const ROUTE_WINDOW_SIZE = 4;
+  const ROUTE_WINDOW_SIZE = 6;
   const currentRoute = routeOptions[routeIndex];
 const fullDriverRoute = currentRoute.points;
 
@@ -60,6 +73,8 @@ const fullDriverRoute = currentRoute.points;
     return routeWindow;
   }, [routeStartIndex]);
   const driverPosition = activeRoute[0];
+  const routeStartPoint = fullDriverRoute[0];
+const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
 
   const bufferPolygon = useMemo(() => {
     return createRouteBuffer(activeRoute);
@@ -168,11 +183,11 @@ const fullDriverRoute = currentRoute.points;
       </div>
 
       <MapContainer
-       center={[28.6280, 77.2400]}
+  center={[28.6280, 77.2400]}
   zoom={12}
-        className="map"
-       scrollWheelZoom={true}
-      >
+  className="map"
+  scrollWheelZoom={true}
+>
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -210,6 +225,26 @@ const fullDriverRoute = currentRoute.points;
     opacity: 0.95,
   }}
 />
+{routeStartPoint && (
+  <Marker position={routeStartPoint} icon={startIcon}>
+    <Popup>
+      <strong>Route Start</strong>
+      <br />
+      Route: {currentRoute.name}
+    </Popup>
+  </Marker>
+)}
+
+{routeEndPoint && (
+  <Marker position={routeEndPoint} icon={endIcon}>
+    <Popup>
+      <strong>Route End</strong>
+      <br />
+      Route: {currentRoute.name}
+    </Popup>
+  </Marker>
+)}
+
         {driverPosition && (
   <Marker position={driverPosition} icon={autoIcon}>
     <Popup>
