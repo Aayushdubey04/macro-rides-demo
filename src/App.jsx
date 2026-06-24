@@ -7,8 +7,10 @@ import {
   CircleMarker,
   Popup,
   GeoJSON,
+  Marker,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import "./App.css";
 
 import { routeOptions, pickupPoints, zones } from "./data/mapData";
@@ -20,6 +22,12 @@ import {
   getCorridorH3Cells,
   getH3Boundary,
 } from "./utils/geoUtils";
+const autoIcon = L.divIcon({
+  html: `<div class="auto-marker">🛺</div>`,
+  className: "custom-auto-icon",
+  iconSize: [42, 42],
+  iconAnchor: [21, 21],
+});
 
 function App() {
   const [routeIndex, setRouteIndex] = useState(0);
@@ -42,6 +50,7 @@ const fullDriverRoute = currentRoute.points;
 
     return routeWindow;
   }, [routeStartIndex]);
+  const driverPosition = activeRoute[0];
 
   const bufferPolygon = useMemo(() => {
     return createRouteBuffer(activeRoute);
@@ -113,7 +122,7 @@ const fullDriverRoute = currentRoute.points;
         </div>
 
         <div className="metric">
-          <span>Route Start Index</span>
+          <span>Current Route Segment</span>
           <strong>{routeStartIndex}</strong>
         </div>
 
@@ -181,6 +190,19 @@ const fullDriverRoute = currentRoute.points;
             weight: 5,
           }}
         />
+        {driverPosition && (
+  <Marker position={driverPosition} icon={autoIcon}>
+    <Popup>
+      <strong>Macro Rides Driver</strong>
+      <br />
+      Current Route: {currentRoute.name}
+      <br />
+      Current Segment: {routeStartIndex + 1}
+      <br />
+      Status: Active
+    </Popup>
+  </Marker>
+)}
 
         {bufferPolygon && (
           <GeoJSON
