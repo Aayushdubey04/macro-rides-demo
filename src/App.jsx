@@ -255,11 +255,17 @@ const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
         {driverPosition && (
   <Marker position={driverPosition} icon={autoIcon} zIndexOffset={1000}>
     <Popup>
-      <strong>Macro Rides Driver</strong>
+      <strong>Current Driver</strong>
+      <br />
+      Driver ID: D1
+      <br />
+      Vehicle Type: EV Auto
       <br />
       Current Route: {currentRoute.name}
       <br />
       Current Segment: {routeStartIndex + 1}
+      <br />
+      Corridor Radius: {BUFFER_RADIUS_KM * 1000} meters
       <br />
       Status: Active
     </Popup>
