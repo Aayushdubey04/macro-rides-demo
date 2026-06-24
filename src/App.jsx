@@ -212,21 +212,28 @@ const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
   pathOptions={{
     color: "#64748b",
     weight: 3,
-    opacity: 0.55,
+    opacity: 0.35,
     dashArray: "8, 10",
   }}
 />
-
+<Polyline
+  positions={activeRoute}
+  pathOptions={{
+    color: "#14b8a6",
+    weight: 11,
+    opacity: 0.28,
+  }}
+/>
 <Polyline
   positions={activeRoute}
   pathOptions={{
     color: "#0f172a",
-    weight: 5,
-    opacity: 0.95,
+    weight: 5.5,
+    opacity: 0.98,
   }}
 />
 {routeStartPoint && (
-  <Marker position={routeStartPoint} icon={startIcon}>
+  <Marker position={routeStartPoint} icon={startIcon} zIndexOffset={800}>
     <Popup>
       <strong>Route Start</strong>
       <br />
@@ -236,7 +243,7 @@ const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
 )}
 
 {routeEndPoint && (
-  <Marker position={routeEndPoint} icon={endIcon}>
+  <Marker position={routeEndPoint} icon={endIcon} zIndexOffset={800}>
     <Popup>
       <strong>Route End</strong>
       <br />
@@ -246,7 +253,7 @@ const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
 )}
 
         {driverPosition && (
-  <Marker position={driverPosition} icon={autoIcon}>
+  <Marker position={driverPosition} icon={autoIcon} zIndexOffset={1000}>
     <Popup>
       <strong>Macro Rides Driver</strong>
       <br />
@@ -265,9 +272,10 @@ const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
             data={bufferPolygon}
             style={{
               color: "#0ea5e9",
-              weight: 2,
+              weight: 1.5,
+              opacity: 0.65,
               fillColor: "#0ea5e9",
-              fillOpacity: 0.18,
+              fillOpacity: 0.09,
             }}
           />
         )}
@@ -278,9 +286,9 @@ const routeEndPoint = fullDriverRoute[fullDriverRoute.length - 1];
     positions={getH3Boundary(cell)}
     pathOptions={{
       color: "#38bdf8",
-      weight: 0.7,
-      opacity: 0.55,
-      fillOpacity: 0.015,
+      weight: 0.55,
+      opacity: 0.32,
+      fillOpacity: 0.005,
     }}
   />
 ))}
