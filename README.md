@@ -1,146 +1,137 @@
 # Macro Rides - Zone Boundary + Dynamic Route Corridor Visualization Tool
 
-A web-based geospatial visualization demo built for the Macro Rides technical evaluation assignment.
+A working web-based geospatial demo built for the Macro Rides technical evaluation assignment.
 
-The project demonstrates how a driver's route can be visualized on a map, how a 350-meter dynamic pickup corridor can be generated around that route, and how pickup points can be classified as eligible or non-eligible based on whether they fall inside the corridor.
+This project visualizes a simulated driver route in Delhi NCR, generates a 350-meter dynamic pickup corridor around the route, applies H3-based spatial indexing, and highlights pickup points that are eligible within the route corridor.
 
-The solution uses H3 spatial indexing for geospatial cell-based lookup and Leaflet for interactive map visualization.
+The focus of this demo is on the 350m buffer corridor logic, H3 spatial indexing, and map-based visualization rather than real-time GPS data streaming.
 
 ---
 
 ## Live Demo
 
-```text
-Live Demo: <https://macro-rides-demo.vercel.app/>
-```
+**Live Demo:** https://macro-rides-demo.vercel.app/
 
 ---
 
 ## GitHub Repository
 
-```text
-GitHub Repository: <https://github.com/Aayushdubey04/macro-rides-demo>
-```
+**Repository:** https://github.com/Aayushdubey04/macro-rides-demo
 
 ---
 
 ## Project Objective
 
-The objective of this project is to build a functional map-based tool for Macro Rides that can:
+The objective of this project is to build a functional visualization tool that can:
 
-* Display a driver's route on an interactive map
-* Generate a 350-meter buffer corridor around the active route
+* Display a simulated driver's route on an interactive map
+* Generate a 350-meter corridor around the active driver route
+* Convert the corridor into H3 hexagonal cells
 * Display predefined zone boundaries
-* Identify pickup points that fall within the corridor
-* Use H3 indexing for spatial representation and lookup
-* Simulate dynamic route updates and recalculate eligibility in real time
+* Classify pickup points as eligible or non-eligible
+* Dynamically update the route, corridor, H3 cells, and pickup eligibility
+* Present the result through a clean and intuitive map-based interface
 
-This type of tool can be useful in a hyperlocal EV mobility platform where pickup requests need to be matched with drivers already moving along nearby route corridors.
+This type of system can help a hyperlocal EV mobility platform identify pickup points that are close enough to a driver's current route.
 
 ---
 
-## Features
+## Key Features
 
-### 1. Interactive Map Visualization
+### 1. Simulated Delhi NCR Driver Routes
 
-The application displays an interactive map using Leaflet and OpenStreetMap tiles.
+The demo uses hardcoded latitude-longitude coordinates to simulate driver movement across multiple Delhi NCR routes.
 
-The map shows:
+The route data is intentionally simulated because the main focus is on demonstrating corridor generation, H3 logic, and pickup eligibility rather than live GPS streaming.
+
+---
+
+### 2. 350-Meter Dynamic Route Corridor
+
+A 350-meter buffer corridor is generated around the active driver route.
+
+This corridor represents the pickup eligibility area. Pickup points inside this corridor are considered eligible.
+
+---
+
+### 3. H3 Spatial Indexing
+
+The generated route corridor is converted into H3 hexagonal cells.
+
+Each pickup point is also mapped to an H3 cell. This allows the application to use cell-based spatial lookup before final eligibility validation.
+
+---
+
+### 4. Pickup Eligibility Classification
+
+Each pickup point is classified as:
+
+* **Eligible** if it falls inside the 350m route corridor
+* **Not eligible** if it lies outside the active corridor
+
+The popup for each pickup point shows:
+
+* Pickup ID
+* Eligibility status
+* Whether the point is inside the 350m corridor
+* Whether it matches the H3 corridor logic
+* H3 cell ID
+
+---
+
+### 5. Interactive Map Visualization
+
+The map displays:
 
 * Driver route
-* 350-meter pickup corridor
+* Active route segment
+* 350m corridor
 * H3 hexagonal cells
 * Zone boundaries
-* Pickup points
-* Eligible and non-eligible pickup markers
+* Eligible and non-eligible pickup points
+* Start and end route markers
+* Moving EV driver marker
+* Direction arrows along the route
 
 ---
 
-### 2. Driver Route Visualization
+### 6. Dynamic Route Simulation
 
-The driver route is represented using a sequence of latitude-longitude points.
+The EV marker moves along the route step by step.
 
-The route is drawn as a polyline on the map and updates dynamically during the simulation.
+As the driver moves, the application recalculates:
 
----
-
-### 3. 350-Meter Route Corridor
-
-A 350-meter buffer is generated around the active driver route.
-
-This corridor represents the region within which pickup points are considered potentially serviceable by the driver.
-
-The buffer is generated using Turf.js geospatial utilities.
-
----
-
-### 4. H3 Spatial Indexing
-
-The route corridor is converted into H3 hexagonal cells.
-
-Each pickup point is also converted into an H3 cell.
-
-This allows the system to perform spatial lookup using hexagonal indexing instead of only relying on raw latitude-longitude comparison.
-
-H3 resolution 10 is used to provide suitable granularity for a 350-meter corridor.
-
----
-
-### 5. Pickup Eligibility Classification
-
-Each pickup point is classified as either:
-
-* Eligible
-* Not Eligible
-
-A pickup is considered eligible if it falls inside the active 350-meter route corridor.
-
-The system uses both:
-
-* H3-based candidate matching
-* Exact point-in-polygon validation
-
-This improves reliability and avoids incorrect classification near corridor boundaries.
-
----
-
-### 6. Zone Boundary Display
-
-The application displays predefined Macro Rides service zones as polygon boundaries on the map.
-
-These zones help visualize operational areas where rides or pickups may be allowed.
-
----
-
-### 7. Dynamic Route Simulation
-
-The route updates automatically using simulated driver movement.
-
-The demo supports multiple predefined routes. Once one route simulation completes, the application moves to another route.
-
-Whenever the active route changes, the following are recalculated:
-
-* Route polyline
-* 350-meter corridor
+* Active route segment
+* 350m corridor
 * H3 cells
 * Eligible pickup points
 * Dashboard counts
+
+The driver reaches the route end before switching to the next simulated route.
+
+---
+
+### 7. Route Selector
+
+A route selector dropdown allows the user to manually switch between available simulated routes.
+
+When a route is selected, the EV marker, corridor, H3 cells, and pickup eligibility are recalculated.
 
 ---
 
 ### 8. Dashboard Panel
 
-The left-side dashboard shows:
+The dashboard shows:
 
+* Current route name
+* Route selector
 * Buffer radius
 * H3 resolution
 * Total pickup points
-* Eligible pickups
-* Non-eligible pickups
-* Current route information
+* Eligible pickup count
+* Non-eligible pickup count
+* Current route segment
 * Simulation controls
-
-The dashboard also includes buttons to pause/start the simulation and reset the route.
 
 ---
 
@@ -149,28 +140,29 @@ The dashboard also includes buttons to pause/start the simulation and reset the 
 | Technology    | Purpose                                             |
 | ------------- | --------------------------------------------------- |
 | React.js      | Frontend application                                |
-| Vite          | Development and build tool                          |
+| Vite          | Build tool and development server                   |
 | Leaflet       | Interactive map rendering                           |
 | React Leaflet | React bindings for Leaflet                          |
 | Turf.js       | Geospatial buffer and point-in-polygon calculations |
 | H3-js         | Hexagonal spatial indexing                          |
-| OpenStreetMap | Map tiles                                           |
+| OpenStreetMap | Map tile layer                                      |
+| Vercel        | Deployment                                          |
 
 ---
 
-## How the System Works
+## How It Works
 
-### Step 1: Route Representation
+### Step 1: Route Data
 
-Each driver route is stored as a list of latitude-longitude coordinates.
+Each driver route is represented as an array of latitude-longitude coordinates.
 
 Example:
 
 ```js
 [
   [28.6517, 77.1900],
-  [28.6448, 77.2050],
-  [28.6365, 77.2167]
+  [28.6488, 77.1975],
+  [28.6450, 77.2045]
 ]
 ```
 
@@ -180,63 +172,63 @@ Leaflet uses coordinates in the format:
 [latitude, longitude]
 ```
 
-Turf.js uses GeoJSON format, where coordinates are represented as:
+GeoJSON and Turf.js use coordinates in the format:
 
 ```js
 [longitude, latitude]
 ```
 
-So the route coordinates are converted before geospatial processing.
+So route coordinates are converted before geospatial processing.
 
 ---
 
 ### Step 2: Route Buffer Generation
 
-The driver's active route is converted into a GeoJSON LineString.
+The active driver route is converted into a GeoJSON LineString.
 
-A 350-meter buffer is generated around this LineString using Turf.js.
+A 350-meter corridor is generated around this route using Turf.js.
 
 ```js
 turf.buffer(routeLine, 0.35, { units: "kilometers" });
 ```
 
-This creates a polygon representing the valid pickup corridor.
+This creates a polygon representing the pickup eligibility corridor.
 
 ---
 
-### Step 3: H3 Cell Generation
+### Step 3: H3 Corridor Cells
 
-The buffer polygon is converted into H3 cells.
+The buffer polygon is converted into H3 cells at resolution 10.
 
-These cells are displayed on the map to show the spatial indexing layer used for pickup eligibility.
+H3 cells are displayed on the map to show the spatial indexing layer used for corridor matching.
 
 ---
 
 ### Step 4: Pickup Point Classification
 
-Each pickup point is converted into an H3 cell.
+For each pickup point:
 
-The system checks whether the pickup point lies near or inside the corridor cells.
+1. The pickup coordinate is converted into an H3 cell.
+2. Nearby H3 cells are compared with the corridor H3 cells.
+3. The point is validated using exact point-in-polygon checking.
+4. The point is marked eligible only if it satisfies the corridor condition.
 
-Then, exact validation is performed using point-in-polygon checking.
-
-A pickup point is marked eligible only if it satisfies the corridor condition.
+The eligibility logic combines H3-based filtering with exact geometric validation.
 
 ---
 
-### Step 5: Dynamic Updates
+### Step 5: Dynamic Simulation
 
-The route simulation updates the active route segment over time.
+The EV marker moves along the selected route using a time-based simulation.
 
-Whenever the active route changes, the application recalculates:
+At each step, the application updates:
 
+* Driver marker position
 * Active route segment
 * Corridor polygon
 * H3 cells
-* Pickup eligibility
+* Pickup eligibility status
 * Dashboard metrics
-
-This demonstrates how the system can support real-time or simulated route updates.
 
 ---
 
@@ -270,13 +262,11 @@ macro-rides-demo/
 
 ### `src/data/mapData.js`
 
-Contains sample data for:
+Contains simulated data for:
 
 * Driver routes
 * Pickup points
 * Zone boundaries
-
-Multiple driver routes are included to simulate dynamic route changes.
 
 ---
 
@@ -285,7 +275,7 @@ Multiple driver routes are included to simulate dynamic route changes.
 Contains geospatial utility functions for:
 
 * Creating route LineString
-* Creating 350-meter route buffer
+* Creating 350m route buffer
 * Generating H3 cells
 * Classifying pickup points
 * Getting H3 cell boundaries
@@ -296,14 +286,16 @@ Contains geospatial utility functions for:
 
 Main application file.
 
-It handles:
+Handles:
 
 * Map rendering
 * Route simulation
-* Corridor generation
-* Pickup eligibility display
+* Route selector
+* EV marker movement
+* Corridor rendering
+* H3 cell rendering
+* Pickup point rendering
 * Dashboard metrics
-* User controls
 
 ---
 
@@ -312,10 +304,13 @@ It handles:
 Contains styling for:
 
 * Dashboard panel
+* Route selector
 * Map layout
-* Buttons
+* EV marker
+* Start/end markers
+* Direction arrows
+* Pickup markers
 * Legend
-* Metrics
 
 ---
 
@@ -324,7 +319,7 @@ Contains styling for:
 ### 1. Clone the repository
 
 ```bash
-git clone <https://github.com/Aayushdubey04/macro-rides-demo>
+git clone https://github.com/Aayushdubey04/macro-rides-demo.git
 ```
 
 ### 2. Move into the project folder
@@ -345,7 +340,7 @@ npm install
 npm run dev
 ```
 
-### 5. Open the app in browser
+Open the local development URL:
 
 ```text
 http://localhost:5173/
@@ -355,17 +350,15 @@ http://localhost:5173/
 
 ## Build for Production
 
-To create a production build, run:
-
 ```bash
 npm run build
 ```
 
-The production-ready files will be generated inside the `dist` folder.
+The production build is generated inside the `dist` folder.
 
 ---
 
-## Preview Production Build Locally
+## Preview Production Build
 
 ```bash
 npm run preview
@@ -375,65 +368,44 @@ npm run preview
 
 ## Assignment Requirements Covered
 
-| Requirement                 | Status    |
-| --------------------------- | --------- |
-| Driver route display        | Completed |
-| 350-meter route corridor    | Completed |
-| Zone boundary visualization | Completed |
-| Eligible pickup points      | Completed |
-| H3 spatial indexing         | Completed |
-| Leaflet map visualization   | Completed |
-| Dynamic route simulation    | Completed |
-| Working web-based demo      | Completed |
-| Dashboard and controls      | Completed |
+| Requirement                        | Status    |
+| ---------------------------------- | --------- |
+| Driver route display               | Completed |
+| 350-meter route corridor           | Completed |
+| Zone boundary visualization        | Completed |
+| Eligible pickup point highlighting | Completed |
+| H3 spatial indexing                | Completed |
+| Leaflet map visualization          | Completed |
+| Simulated route updates            | Completed |
+| Working web-based demo             | Completed |
+| Source code repository             | Completed |
+| Deployment link                    | Completed |
+| Brief documentation                | Completed |
 
 ---
 
-## Possible Real-World Use Case
+## Assumptions
 
-In a hyperlocal EV mobility system, drivers may already be moving along certain routes.
-
-Instead of assigning every pickup request to every available driver, the system can check whether a pickup point lies close to a driver's current or upcoming route.
-
-This can help with:
-
-* Better rider-driver matching
-* Lower driver detours
-* Faster pickup decisions
-* Improved fleet utilization
-* More efficient last-mile EV mobility operations
+* Driver routes are simulated using hardcoded Delhi NCR coordinates.
+* Pickup points are also simulated for demonstration.
+* The project does not use live GPS tracking or real-time backend data.
+* The main goal is to demonstrate geospatial corridor logic, H3 indexing, and pickup eligibility visualization.
+* A pickup point is eligible only if it lies within the active 350m route corridor.
 
 ---
 
-## Limitations
+## Possible Real-World Extension
 
-This is a frontend-based simulation demo.
+In a production-level system, this demo can be extended with:
 
-The current version uses predefined routes, pickup points, and zone boundaries.
-
-For a production-level system, the following can be added:
-
-* Real-time driver GPS updates
-* Backend API integration
-* Database for pickup requests
-* Live rider-driver matching
-* Route optimization
+* Live driver GPS tracking
+* Backend APIs for route and pickup data
+* Real-time rider pickup requests
+* Multiple active drivers
 * Traffic-aware routing
-* Authentication and role-based dashboards
-
----
-
-## Future Improvements
-
-Possible improvements include:
-
-* Integrating live location data
-* Adding route optimization APIs
-* Supporting real-time pickup request updates
-* Adding driver and rider dashboards
-* Improving H3-based filtering for large-scale datasets
-* Adding backend services for persistent storage
-* Supporting multiple active drivers at the same time
+* Route optimization
+* Driver-rider assignment logic
+* Database-backed trip and zone management
 
 ---
 
@@ -447,7 +419,5 @@ Indian Institute of Technology Kanpur
 
 ## Contact
 
-```text
-Email: dubeyaayush0403@gmail.com
-```
+**Email:** [dubeyaayush0403@gmail.com](mailto:dubeyaayush0403@gmail.com)
 
