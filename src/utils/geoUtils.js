@@ -73,9 +73,11 @@ export function classifyPickupPoints(
   pickupPoints,
   bufferPolygon,
   corridorCells,
-  zones = []
+  zones = [],
+  route = []
 ) {
   const corridorCellSet = new Set(corridorCells);
+  const routeLine = createRouteLine(route);
 
   const zonePolygons = zones.map((zone) => ({
     id: zone.id,
@@ -93,6 +95,15 @@ export function classifyPickupPoints(
     );
 
     const pointGeoJSON = turf.point([point.lng, point.lat]);
+    const nearestPoint = routeLine
+  ? turf.nearestPointOnLine(routeLine, pointGeoJSON, {
+      units: "kilometers",
+    })
+  : null;
+
+const distanceFromRouteMeters = nearestPoint
+  ? Math.round(nearestPoint.properties.dist * 1000)
+  : null;
 
     const exactInside = bufferPolygon
       ? turf.booleanPointInPolygon(pointGeoJSON, bufferPolygon)
@@ -112,6 +123,7 @@ export function classifyPickupPoints(
       insideServiceZone,
       serviceZoneId: serviceZone?.id || null,
       serviceZoneName: serviceZone?.name || "Outside service zone",
+      distanceFromRouteMeters,
       eligible,
     };
   });

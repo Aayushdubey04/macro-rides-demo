@@ -164,14 +164,22 @@ const directionMarkers = useMemo(() => {
   }, [bufferPolygon]);
 
   const classifiedPickups = useMemo(() => {
-    return classifyPickupPoints(pickupPoints, bufferPolygon, corridorCells, zones );
-  }, [bufferPolygon, corridorCells]);
+  return classifyPickupPoints(
+    pickupPoints,
+    bufferPolygon,
+    corridorCells,
+    zones,
+    fullDriverRoute
+  );
+}, [bufferPolygon, corridorCells, fullDriverRoute]);
 
   const eligibleCount = classifiedPickups.filter((p) => p.eligible).length;
   const nonEligibleCount = classifiedPickups.length - eligibleCount;
   const insideZoneCount = classifiedPickups.filter(
   (p) => p.insideServiceZone
 ).length;
+const corridorH3CellCount = corridorCells.length;
+const activeRoutePointCount = activeRoute.length;
 
   useEffect(() => {
   if (!isRunning) return;
@@ -230,6 +238,17 @@ const directionMarkers = useMemo(() => {
           <span>H3 Resolution</span>
           <strong>{H3_RESOLUTION}</strong>
         </div>
+        <div className="metric">
+        <span>Corridor H3 Cells</span>
+        <strong>{corridorH3CellCount}</strong>
+        </div>
+
+        <div className="metric">
+        <span>Active Route Points</span>
+        <strong>{activeRoutePointCount}</strong>
+        </div>
+
+
 
         <div className="metric">
           <span>Total Pickups</span>
@@ -440,14 +459,21 @@ pathOptions={{
               Status: {point.eligible ? "Eligible" : "Not Eligible"}
               <br />
               Inside 350m corridor: {point.exactInside ? "Yes" : "No"}
-              <br />
-              H3 corridor match: {point.h3Candidate ? "Yes" : "No"}
-              <br />
-              Inside service zone: {point.insideServiceZone ? "Yes" : "No"}
-              <br />
-              Service Zone: {point.serviceZoneName}
-              <br />
-              H3 Cell: {point.h3Cell}
+<br />
+Distance from route:{" "}
+{point.distanceFromRouteMeters !== null
+  ? `${point.distanceFromRouteMeters} m`
+  : "N/A"}
+<br />
+Corridor radius: {BUFFER_RADIUS_KM * 1000} m
+<br />
+H3 corridor match: {point.h3Candidate ? "Yes" : "No"}
+<br />
+Inside service zone: {point.insideServiceZone ? "Yes" : "No"}
+<br />
+Service Zone: {point.serviceZoneName}
+<br />
+H3 Cell: {point.h3Cell}
 
             </Popup>
           </CircleMarker>
